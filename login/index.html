@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+
+<body>
+    <h1>Area de registro</h1>
+    <input type="email" id="usr" placeholder="Ingrese su email">
+    <input type="password" id="pwd" placeholder="Ingrese su contraseña">
+    <button id="btnRegistrar">Registrar</button>
+    <!-- Area de cerrar sesion -->
+    <h3 id="userEmail"></h3>
+    <button id="btnCerrarSesion">cerrar sesion </button>
+
+    <h1>Area de acceso</h1>
+    <!-- el id no puede ser el mismo... sabes que solo debe haber un id en toda la pagina -->
+    <input type="email" id="usrAcc" placeholder="Ingrese su email">
+    <input type="password" id="pwdAcc" placeholder="Ingrese su contraseña">
+    <button id="btnAcceder">Acceder</button>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuQfhwDObV4Z-nqwv9Bi4LijuQ7z2dk7w",
+            authDomain: "ciberpe-5f0cd.firebaseapp.com",
+            projectId: "ciberpe-5f0cd",
+            storageBucket: "ciberpe-5f0cd.appspot.com",
+            messagingSenderId: "1094933241613",
+            appId: "1:1094933241613:web:c45fdbaf924259cd33da44"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth();
+
+        verificarAutenticacion();
+
+        function registra() {
+            var UsuarioRegistro = document.getElementById("usr").value;
+            var PasswordRegistro = document.getElementById("pwd").value;
+
+            createUserWithEmailAndPassword(auth, UsuarioRegistro, PasswordRegistro)
+                .then((userCredential) => {
+
+                    const user = userCredential.user;
+
+                    console.log("esta bieeen");
+                })
+                .catch((error) => {
+                    console.log("esta maaal");
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    console.log(errorMessage);
+                });
+        }
+
+        var boton = document.getElementById("btnRegistrar");
+        boton.addEventListener("click", registra);
+
+        function accede() {
+            var UsuarioRegistro2 = document.getElementById("usrAcc").value;
+            var PasswordRegistro2 = document.getElementById("pwdAcc").value;
+
+            signInWithEmailAndPassword(auth, UsuarioRegistro2, PasswordRegistro2)
+                .then((userCredential) => {
+
+                    const user = userCredential.user;
+
+                    console.log("logueado esta");
+
+
+                    const userEmail = user.email;
+                    document.getElementById("userEmail").textContent = "logueado " + userEmail;
+                    verificarAutenticacion();
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log("esta maaal");
+                    console.log(errorMessage);
+                });
+        }
+
+        var boton2 = document.getElementById("btnAcceder");
+        boton2.addEventListener("click", accede);
+
+        function cerrarSesion() {
+            signOut(auth)
+                .then(() => {
+
+                    console.log("Sesión cerrada");
+                    document.getElementById("userEmail").textContent = "";
+                    verificarAutenticacion();
+                })
+                .catch((error) => {
+
+                    console.log("Error al cerrar sesión");
+                    console.log(error);
+                });
+        }
+
+        var botonCerrarSesion = document.getElementById("btnCerrarSesion");
+        botonCerrarSesion.addEventListener("click", cerrarSesion);
+
+        function verificarAutenticacion() {
+            const usuarioActual = auth.currentUser;
+            if (usuarioActual) {
+
+                document.getElementById("btnCerrarSesion").style.display = "block";
+
+                document.getElementById("userEmail").textContent = "Logueado " + usuarioActual.email;
+            } else {
+
+                document.getElementById("btnCerrarSesion").style.display = "none";
+
+                document.getElementById("userEmail").textContent = "";
+            }
+        }
+    </script>
+</body>
+
+</html>
+
